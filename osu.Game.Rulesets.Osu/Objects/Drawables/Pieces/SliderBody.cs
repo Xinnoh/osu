@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System;
@@ -14,6 +14,7 @@ using osu.Game.Configuration;
 using OpenTK;
 using OpenTK.Graphics.ES30;
 using OpenTK.Graphics;
+using osu.Framework.Graphics.Primitives;
 
 namespace osu.Game.Rulesets.Osu.Objects.Drawables.Pieces
 {
@@ -48,6 +49,8 @@ namespace osu.Game.Rulesets.Osu.Objects.Drawables.Pieces
                     Schedule(reloadTexture);
             }
         }
+
+        public Quad PathDrawQuad => container.ScreenSpaceDrawQuad;
 
         private int textureWidth => (int)PathWidth * 2;
 

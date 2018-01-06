@@ -1,7 +1,8 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Rulesets.Judgements
 {
@@ -17,13 +18,31 @@ namespace osu.Game.Rulesets.Judgements
         /// </summary>
         public virtual HitResult MaxResult => HitResult.Perfect;
 
+        /// <summary>
+        /// The combo prior to this judgement occurring.
+        /// </summary>
+        public int ComboAtJudgement;
+
+        /// <summary>
+        /// The highest combo achieved prior to this judgement occurring.
+        /// </summary>
+        public int HighestComboAtJudgement;
+
+        /// <summary>
+        /// Whether a successful hit occurred.
+        /// </summary>
         public bool IsHit => Result > HitResult.Miss;
+
+        /// <summary>
+        /// Whether this judgement is the final judgement for the hit object.
+        /// </summary>
+        public bool Final = true;
 
         /// <summary>
         /// The offset from a perfect hit at which this judgement occurred.
         /// Populated when added via <see cref="DrawableHitObject{TObject}.AddJudgement"/>.
         /// </summary>
-        public double TimeOffset { get; internal set; }
+        public double TimeOffset { get; set; }
 
         /// <summary>
         /// Whether the <see cref="Result"/> should affect the combo portion of the score.

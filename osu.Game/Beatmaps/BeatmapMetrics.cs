@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ namespace osu.Game.Beatmaps
     public class BeatmapMetrics
     {
         /// <summary>
-        /// Total vote counts of user ratings on a scale of 0..length.
+        /// Total vote counts of user ratings on a scale of 0..10 where 0 is unused (probably will be fixed at API?).
         /// </summary>
         public IEnumerable<int> Ratings { get; set; }
 

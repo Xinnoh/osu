@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System;
@@ -138,6 +138,8 @@ namespace osu.Game.Graphics.Containers
         }
 
         public void ScrollTo(Drawable section) => scrollContainer.ScrollTo(scrollContainer.GetChildPosInContent(section) - (FixedHeader?.BoundingBox.Height ?? 0));
+
+        public void ScrollToTop() => scrollContainer.ScrollTo(0);
 
         private float lastKnownScroll;
         protected override void UpdateAfterChildren()

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System;
@@ -21,8 +21,6 @@ namespace osu.Game.Screens.Play
     public class PauseContainer : Container
     {
         public bool IsPaused { get; private set; }
-
-        public bool AllowExit => IsPaused && pauseOverlay.Alpha == 1;
 
         public Func<bool> CheckCanPause;
 
@@ -121,7 +119,7 @@ namespace osu.Game.Screens.Play
             base.Update();
         }
 
-        public class PauseOverlay : MenuOverlay
+        public class PauseOverlay : GameplayMenuOverlay
         {
             public Action OnResume;
 
@@ -132,7 +130,7 @@ namespace osu.Game.Screens.Play
             {
                 if (!args.Repeat && args.Key == Key.Escape)
                 {
-                    Buttons.Children.First().TriggerOnClick();
+                    InternalButtons.Children.First().TriggerOnClick();
                     return true;
                 }
 
@@ -142,9 +140,9 @@ namespace osu.Game.Screens.Play
             [BackgroundDependencyLoader]
             private void load(OsuColour colours)
             {
-                AddButton("Continue", colours.Green, OnResume);
-                AddButton("Retry", colours.YellowDark, OnRetry);
-                AddButton("Quit", new Color4(170, 27, 39, 255), OnQuit);
+                AddButton("Continue", colours.Green, () => OnResume?.Invoke());
+                AddButton("Retry", colours.YellowDark, () => OnRetry?.Invoke());
+                AddButton("Quit", new Color4(170, 27, 39, 255), () => OnQuit?.Invoke());
             }
         }
     }

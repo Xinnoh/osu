@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System.IO;
@@ -50,13 +50,13 @@ namespace osu.Game.Tests.Beatmaps.IO
 
                 BeatmapMetadata meta;
                 using (var stream = new StreamReader(reader.GetStream("Soleily - Renatus (Deif) [Platter].osu")))
-                    meta = BeatmapDecoder.GetDecoder(stream).Decode(stream).Metadata;
+                    meta = Decoder.GetDecoder(stream).DecodeBeatmap(stream).Metadata;
 
                 Assert.AreEqual(241526, meta.OnlineBeatmapSetID);
                 Assert.AreEqual("Soleily", meta.Artist);
                 Assert.AreEqual("Soleily", meta.ArtistUnicode);
                 Assert.AreEqual("03. Renatus - Soleily 192kbps.mp3", meta.AudioFile);
-                Assert.AreEqual("Deif", meta.Author);
+                Assert.AreEqual("Deif", meta.AuthorString);
                 Assert.AreEqual("machinetop_background.jpg", meta.BackgroundFile);
                 Assert.AreEqual(164471, meta.PreviewTime);
                 Assert.AreEqual(string.Empty, meta.Source);

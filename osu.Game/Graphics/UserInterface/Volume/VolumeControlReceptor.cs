@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System;
@@ -8,7 +8,7 @@ using osu.Game.Input.Bindings;
 
 namespace osu.Game.Graphics.UserInterface.Volume
 {
-    internal class VolumeControlReceptor : Container, IKeyBindingHandler<GlobalAction>
+    public class VolumeControlReceptor : Container, IKeyBindingHandler<GlobalAction>
     {
         public Func<GlobalAction, bool> ActionRequested;
 

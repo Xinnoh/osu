@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System;
@@ -20,11 +20,11 @@ namespace osu.Game.Overlays
 {
     public abstract class SettingsOverlay : OsuFocusedOverlayContainer
     {
-        internal const float CONTENT_MARGINS = 10;
+        public const float CONTENT_MARGINS = 10;
 
         public const float TRANSITION_LENGTH = 600;
 
-        public const float SIDEBAR_WIDTH = Sidebar.DEFAULT_WIDTH;
+        private const float sidebar_width = Sidebar.DEFAULT_WIDTH;
 
         protected const float WIDTH = 400;
 
@@ -102,7 +102,7 @@ namespace osu.Game.Overlays
 
             if (showSidebar)
             {
-                AddInternal(Sidebar = new Sidebar { Width = SIDEBAR_WIDTH });
+                AddInternal(Sidebar = new Sidebar { Width = sidebar_width });
 
                 SectionsContainer.SelectedSection.ValueChanged += section =>
                 {
@@ -167,7 +167,7 @@ namespace osu.Game.Overlays
 
             ContentContainer.MoveToX(-WIDTH, TRANSITION_LENGTH, Easing.OutQuint);
 
-            Sidebar?.MoveToX(-SIDEBAR_WIDTH, TRANSITION_LENGTH, Easing.OutQuint);
+            Sidebar?.MoveToX(-sidebar_width, TRANSITION_LENGTH, Easing.OutQuint);
             this.FadeTo(0, TRANSITION_LENGTH, Easing.OutQuint);
 
             searchTextBox.HoldFocus = false;
@@ -176,8 +176,6 @@ namespace osu.Game.Overlays
         }
 
         public override bool AcceptsFocus => true;
-
-        protected override bool OnClick(InputState state) => true;
 
         protected override void OnFocus(InputState state)
         {

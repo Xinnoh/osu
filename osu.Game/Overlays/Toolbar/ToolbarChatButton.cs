@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using osu.Framework.Allocation;
@@ -6,14 +6,14 @@ using osu.Game.Graphics;
 
 namespace osu.Game.Overlays.Toolbar
 {
-    internal class ToolbarChatButton : ToolbarOverlayToggleButton
+    public class ToolbarChatButton : ToolbarOverlayToggleButton
     {
         public ToolbarChatButton()
         {
             SetIcon(FontAwesome.fa_comments);
         }
 
-        [BackgroundDependencyLoader]
+        [BackgroundDependencyLoader(true)]
         private void load(ChatOverlay chat)
         {
             StateContainer = chat;

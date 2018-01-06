@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using osu.Framework.Allocation;
@@ -97,6 +97,11 @@ namespace osu.Game.Overlays.Settings.Sections.Input
                     doubleValue.ValueChanged += newValue => base.Bindable.Value = newValue;
                 }
             }
+
+            public SensitivitySetting()
+            {
+                KeyboardStep = 0.01f;
+            }
         }
 
         private class SensitivitySlider : OsuSliderBar<double>
@@ -105,8 +110,6 @@ namespace osu.Game.Overlays.Settings.Sections.Input
 
             public SensitivitySlider()
             {
-                KeyboardStep = 0.01f;
-
                 Current.ValueChanged += newValue =>
                 {
                     if (!isDragging && Sensitivity != null)

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System;
@@ -20,7 +20,7 @@ namespace osu.Game.Rulesets.UI
         /// </summary>
         public HitObjectContainer HitObjects { get; protected set; }
 
-        internal Container<Drawable> ScaledContent;
+        public Container<Drawable> ScaledContent;
 
         /// <summary>
         /// Whether we are currently providing the local user a gameplay cursor.

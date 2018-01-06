@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System;
@@ -12,7 +12,7 @@ using osu.Framework.Graphics;
 
 namespace osu.Game.Screens.Multiplayer
 {
-    internal class Match : ScreenWhiteBox
+    public class Match : ScreenWhiteBox
     {
         protected override IEnumerable<Type> PossibleChildren => new[] {
             typeof(MatchSongSelect),

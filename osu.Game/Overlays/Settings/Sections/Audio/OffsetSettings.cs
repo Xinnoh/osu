@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using osu.Framework.Allocation;
@@ -20,11 +20,11 @@ namespace osu.Game.Overlays.Settings.Sections.Audio
                 new SettingsSlider<double, OffsetSlider>
                 {
                     LabelText = "Audio Offset",
-                    Bindable = config.GetBindable<double>(OsuSetting.AudioOffset)
+                    Bindable = config.GetBindable<double>(OsuSetting.AudioOffset),
+                    KeyboardStep = 100f
                 },
-                new OsuButton
+                new SettingsButton
                 {
-                    RelativeSizeAxes = Axes.X,
                     Text = "Offset wizard"
                 }
             };

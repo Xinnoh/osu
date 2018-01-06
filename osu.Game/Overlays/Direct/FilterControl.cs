@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using OpenTK;
@@ -39,7 +39,7 @@ namespace osu.Game.Overlays.Direct
             DisplayStyleControl.Dropdown.AccentColour = colours.BlueDark;
 
             Ruleset.BindTo(game?.Ruleset ?? new Bindable<RulesetInfo> { Value = rulesets.GetRuleset(0) });
-            foreach (var r in rulesets.AllRulesets)
+            foreach (var r in rulesets.AvailableRulesets)
             {
                 modeButtons.Add(new RulesetToggleButton(Ruleset, r));
             }
@@ -105,6 +105,7 @@ namespace osu.Game.Overlays.Direct
 
     public enum DirectSortCriteria
     {
+        Relevance,
         Title,
         Artist,
         Creator,

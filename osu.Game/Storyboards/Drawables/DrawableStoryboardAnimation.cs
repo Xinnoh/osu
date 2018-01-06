@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using OpenTK;
@@ -13,9 +13,6 @@ namespace osu.Game.Storyboards.Drawables
     public class DrawableStoryboardAnimation : TextureAnimation, IFlippable
     {
         public StoryboardAnimation Animation { get; private set; }
-
-        protected override bool ShouldBeAlive => Animation.HasCommands && base.ShouldBeAlive;
-        public override bool RemoveWhenNotAlive => !Animation.HasCommands || base.RemoveWhenNotAlive;
 
         public bool FlipH { get; set; }
         public bool FlipV { get; set; }
@@ -59,11 +56,8 @@ namespace osu.Game.Storyboards.Drawables
             Position = animation.InitialPosition;
             Repeat = animation.LoopType == AnimationLoopType.LoopForever;
 
-            if (animation.HasCommands)
-            {
-                LifetimeStart = animation.StartTime;
-                LifetimeEnd = animation.EndTime;
-            }
+            LifetimeStart = animation.StartTime;
+            LifetimeEnd = animation.EndTime;
         }
 
         [BackgroundDependencyLoader]

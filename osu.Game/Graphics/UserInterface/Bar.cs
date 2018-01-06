@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using OpenTK;
@@ -20,6 +20,7 @@ namespace osu.Game.Graphics.UserInterface
         private const Easing easing = Easing.InOutCubic;
 
         private float length;
+
         /// <summary>
         /// Length of the bar, ranges from 0 to 1
         /// </summary>

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using osu.Framework.Graphics;
@@ -14,10 +14,10 @@ namespace osu.Game.Overlays.BeatmapSet
         public DownloadButton(string title, string subtitle)
         {
             Width = 120;
-            RelativeSizeAxes = Axes.Y;
 
-            Child = new Container
+            Add(new Container
             {
+                Depth = -1,
                 RelativeSizeAxes = Axes.Both,
                 Padding = new MarginPadding { Horizontal = 10 },
                 Children = new Drawable[]
@@ -53,7 +53,7 @@ namespace osu.Game.Overlays.BeatmapSet
                         Margin = new MarginPadding { Right = 5 },
                     },
                 },
-            };
+            });
         }
     }
 }

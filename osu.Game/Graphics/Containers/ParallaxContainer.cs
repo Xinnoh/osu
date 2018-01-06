@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using osu.Framework.Graphics.Containers;
@@ -11,7 +11,7 @@ using osu.Framework.Configuration;
 
 namespace osu.Game.Graphics.Containers
 {
-    internal class ParallaxContainer : Container, IRequireHighFrequencyMousePosition
+    public class ParallaxContainer : Container, IRequireHighFrequencyMousePosition
     {
         public float ParallaxAmount = 0.02f;
 

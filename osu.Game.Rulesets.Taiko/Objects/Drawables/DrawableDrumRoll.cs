@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System.Linq;
@@ -13,6 +13,7 @@ using osu.Game.Rulesets.Taiko.Objects.Drawables.Pieces;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Judgements;
+using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Rulesets.Taiko.Objects.Drawables
 {
@@ -43,7 +44,7 @@ namespace osu.Game.Rulesets.Taiko.Objects.Drawables
                 RelativeChildSize = new Vector2((float)HitObject.Duration, 1)
             });
 
-            foreach (var tick in drumRoll.Ticks)
+            foreach (var tick in drumRoll.NestedHitObjects.OfType<DrumRollTick>())
             {
                 var newTick = new DrawableDrumRollTick(tick);
                 newTick.OnJudgement += onTickJudgement;

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using osu.Game.Rulesets.Objects.Types;
@@ -23,7 +23,7 @@ namespace osu.Game.Rulesets.Objects.Legacy
 
         public double Distance { get; set; }
 
-        public List<SampleInfoList> RepeatSamples { get; set; }
+        public List<List<SampleInfo>> RepeatSamples { get; set; }
         public int RepeatCount { get; set; } = 1;
 
         public double EndTime => StartTime + RepeatCount * Distance / Velocity;
@@ -46,9 +46,9 @@ namespace osu.Game.Rulesets.Objects.Legacy
             throw new NotImplementedException();
         }
 
-        public override void ApplyDefaults(ControlPointInfo controlPointInfo, BeatmapDifficulty difficulty)
+        protected override void ApplyDefaultsToSelf(ControlPointInfo controlPointInfo, BeatmapDifficulty difficulty)
         {
-            base.ApplyDefaults(controlPointInfo, difficulty);
+            base.ApplyDefaultsToSelf(controlPointInfo, difficulty);
 
             TimingControlPoint timingPoint = controlPointInfo.TimingPointAt(StartTime);
             DifficultyControlPoint difficultyPoint = controlPointInfo.DifficultyPointAt(StartTime);

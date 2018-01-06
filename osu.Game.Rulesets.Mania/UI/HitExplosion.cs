@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using OpenTK;
@@ -57,8 +57,10 @@ namespace osu.Game.Rulesets.Mania.UI
         {
             base.LoadComplete();
 
-            this.ScaleTo(2f, 600, Easing.OutQuint).FadeOut(500).Expire();
+            this.ScaleTo(2f, 600, Easing.OutQuint).FadeOut(500);
             inner.FadeOut(250);
+
+            Expire(true);
         }
     }
 }

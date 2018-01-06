@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System.Linq;
@@ -329,17 +329,16 @@ namespace osu.Game.Screens.Multiplayer
             if (value != null)
             {
                 coverContainer.FadeIn(transition_duration);
-                coverContainer.Children = new[]
+
+                LoadComponentAsync(new BeatmapSetCover(value.BeatmapSet)
                 {
-                    new AsyncLoadWrapper(new BeatmapSetCover(value.BeatmapSet)
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        FillMode = FillMode.Fill,
-                        OnLoadComplete = d => d.FadeInFromZero(400, Easing.Out),
-                    }) { RelativeSizeAxes = Axes.Both },
-                };
+                    RelativeSizeAxes = Axes.Both,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    FillMode = FillMode.Fill,
+                    OnLoadComplete = d => d.FadeInFromZero(400, Easing.Out),
+                },
+                coverContainer.Add);
 
                 beatmapTitle.Current = localisation.GetUnicodePreference(value.Metadata.TitleUnicode, value.Metadata.Title);
                 beatmapDash.Text = @" - ";

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using osu.Framework.Allocation;
@@ -8,6 +8,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Beatmaps;
 using osu.Game.Graphics;
+using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
 using OpenTK;
 using OpenTK.Graphics;
@@ -74,20 +75,18 @@ namespace osu.Game.Overlays.BeatmapSet
                         {
                             RelativeSizeAxes = Axes.Both,
                             Padding = new MarginPadding { Right = metadata_width + BeatmapSetOverlay.RIGHT_WIDTH + spacing * 2 },
-                            Child = new ScrollContainer
+                            Child = new Container
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                ScrollbarVisible = false,
                                 Child = description = new MetadataSection("Description"),
                             },
                         },
-                        new ScrollContainer
+                        new Container
                         {
                             Anchor = Anchor.TopRight,
                             Origin = Anchor.TopRight,
                             RelativeSizeAxes = Axes.Y,
                             Width = metadata_width,
-                            ScrollbarVisible = false,
                             Padding = new MarginPadding { Horizontal = 10 },
                             Margin = new MarginPadding { Right = BeatmapSetOverlay.RIGHT_WIDTH + spacing },
                             Child = new FillFlowContainer
@@ -178,7 +177,7 @@ namespace osu.Game.Overlays.BeatmapSet
                         Shadow = false,
                         Margin = new MarginPadding { Top = 20 },
                     },
-                    textFlow = new TextFlowContainer
+                    textFlow = new OsuTextFlowContainer
                     {
                         RelativeSizeAxes = Axes.X,
                         AutoSizeAxes = Axes.Y,

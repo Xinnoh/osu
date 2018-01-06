@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using osu.Framework.Allocation;
@@ -17,6 +17,7 @@ using OpenTK;
 using OpenTK.Graphics;
 using osu.Framework.Configuration;
 using System;
+using osu.Game.Graphics.Containers;
 
 namespace osu.Game.Overlays.Chat
 {
@@ -259,7 +260,7 @@ namespace osu.Game.Overlays.Chat
                 };
             }
 
-            public class CloseButton : ClickableContainer
+            public class CloseButton : OsuClickableContainer
             {
                 private readonly SpriteIcon icon;
 

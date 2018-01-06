@@ -1,13 +1,13 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Beatmaps;
-using osu.Game.Beatmaps.Formats;
 using osu.Game.Rulesets;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Screens.Play;
@@ -16,33 +16,46 @@ using OpenTK.Graphics;
 
 namespace osu.Game.Tests.Visual
 {
-    public class TestCasePlayer : OsuTestCase
+    public abstract class TestCasePlayer : ScreenTestCase
     {
-        protected Player Player;
-        private RulesetStore rulesets;
+        private readonly Type ruleset;
 
-        public override string Description => @"Showing everything to play the game.";
+        protected Player Player;
+
+        private TestWorkingBeatmap working;
+
+        /// <summary>
+        /// Create a TestCase which runs through the Player screen.
+        /// </summary>
+        /// <param name="ruleset">An optional ruleset type which we want to target. If not provided we'll allow all rulesets to be tested.</param>
+        protected TestCasePlayer(Type ruleset)
+        {
+            this.ruleset = ruleset;
+        }
+
+        protected TestCasePlayer()
+        {
+
+        }
 
         [BackgroundDependencyLoader]
         private void load(RulesetStore rulesets)
         {
-            this.rulesets = rulesets;
-        }
-
-        protected override void LoadComplete()
-        {
-            base.LoadComplete();
-
             Add(new Box
             {
                 RelativeSizeAxes = Framework.Graphics.Axes.Both,
                 Colour = Color4.Black,
+                Depth = int.MaxValue
             });
 
-            foreach (var r in rulesets.Query<RulesetInfo>())
-                AddStep(r.Name, () => loadPlayerFor(r));
+            string instantiation = ruleset?.AssemblyQualifiedName;
 
-            loadPlayerFor(rulesets.Query<RulesetInfo>().First());
+            foreach (var r in rulesets.AvailableRulesets.Where(rs => instantiation == null || rs.InstantiationInfo == instantiation))
+            {
+                Player p = null;
+                AddStep(r.Name, () => p = loadPlayerFor(r));
+                AddUntilStep(() => p.IsLoaded);
+            }
         }
 
         protected virtual Beatmap CreateBeatmap()
@@ -51,12 +64,12 @@ namespace osu.Game.Tests.Visual
 
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(test_beatmap_data)))
             using (var reader = new StreamReader(stream))
-                beatmap = BeatmapDecoder.GetDecoder(reader).Decode(reader);
+                beatmap = Game.Beatmaps.Formats.Decoder.GetDecoder(reader).DecodeBeatmap(reader);
 
             return beatmap;
         }
 
-        private void loadPlayerFor(RulesetInfo r)
+        private Player loadPlayerFor(RulesetInfo r)
         {
             var beatmap = CreateBeatmap();
 
@@ -64,25 +77,38 @@ namespace osu.Game.Tests.Visual
 
             var instance = r.CreateInstance();
 
-            WorkingBeatmap working = new TestWorkingBeatmap(beatmap);
+            working = new TestWorkingBeatmap(beatmap);
             working.Mods.Value = new[] { instance.GetAllMods().First(m => m is ModNoFail) };
 
             if (Player != null)
                 Remove(Player);
 
-            Add(Player = CreatePlayer(working, instance));
+            var player = CreatePlayer(working, instance);
+
+            LoadComponentAsync(player, LoadScreen);
+
+            return player;
         }
 
-        protected virtual Player CreatePlayer(WorkingBeatmap beatmap, Ruleset ruleset)
+        protected override void Update()
         {
-            return new Player
-            {
-                InitialBeatmap = beatmap
-            };
+            base.Update();
+
+            if (working != null)
+                // note that this will override any mod rate application
+                working.Track.Rate = Clock.Rate;
         }
+
+        protected virtual Player CreatePlayer(WorkingBeatmap beatmap, Ruleset ruleset) => new Player
+        {
+            InitialBeatmap = beatmap,
+            AllowPause = false,
+            AllowLeadIn = false,
+            AllowResults = false,
+        };
 
         private const string test_beatmap_data =
-@"osu file format v14
+            @"osu file format v14
 
 [General]
 AudioLeadIn: 500

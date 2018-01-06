@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System.Linq;
@@ -6,7 +6,6 @@ using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Mania.Judgements;
 using osu.Game.Rulesets.Mania.Objects;
-using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.UI;
 
@@ -100,7 +99,7 @@ namespace osu.Game.Rulesets.Mania.Scoring
 
         protected override void SimulateAutoplay(Beatmap<ManiaHitObject> beatmap)
         {
-            BeatmapDifficulty difficulty = beatmap.BeatmapInfo.Difficulty;
+            BeatmapDifficulty difficulty = beatmap.BeatmapInfo.BaseDifficulty;
             hpMultiplier = BeatmapDifficulty.DifficultyRange(difficulty.DrainRate, hp_multiplier_min, hp_multiplier_mid, hp_multiplier_max);
             hpMissMultiplier = BeatmapDifficulty.DifficultyRange(difficulty.DrainRate, hp_multiplier_miss_min, hp_multiplier_miss_mid, hp_multiplier_miss_max);
 
@@ -116,7 +115,7 @@ namespace osu.Game.Rulesets.Mania.Scoring
                         AddJudgement(new ManiaJudgement { Result = HitResult.Perfect });
 
                         // Ticks
-                        int tickCount = holdNote.Ticks.Count();
+                        int tickCount = holdNote.NestedHitObjects.OfType<HoldNoteTick>().Count();
                         for (int i = 0; i < tickCount; i++)
                             AddJudgement(new HoldNoteTickJudgement { Result = HitResult.Perfect });
                     }

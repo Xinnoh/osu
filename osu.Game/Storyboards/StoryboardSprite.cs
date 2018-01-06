@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using OpenTK;
@@ -16,6 +16,8 @@ namespace osu.Game.Storyboards
         private readonly List<CommandTrigger> triggers = new List<CommandTrigger>();
 
         public string Path { get; set; }
+        public bool IsDrawable => HasCommands;
+
         public Anchor Origin;
         public Vector2 InitialPosition;
 

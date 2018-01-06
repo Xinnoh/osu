@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using OpenTK;
@@ -13,9 +13,6 @@ namespace osu.Game.Storyboards.Drawables
     public class DrawableStoryboardSprite : Sprite, IFlippable
     {
         public StoryboardSprite Sprite { get; private set; }
-
-        protected override bool ShouldBeAlive => Sprite.HasCommands && base.ShouldBeAlive;
-        public override bool RemoveWhenNotAlive => !Sprite.HasCommands || base.RemoveWhenNotAlive;
 
         public bool FlipH { get; set; }
         public bool FlipV { get; set; }
@@ -58,11 +55,8 @@ namespace osu.Game.Storyboards.Drawables
             Origin = sprite.Origin;
             Position = sprite.InitialPosition;
 
-            if (sprite.HasCommands)
-            {
-                LifetimeStart = sprite.StartTime;
-                LifetimeEnd = sprite.EndTime;
-            }
+            LifetimeStart = sprite.StartTime;
+            LifetimeEnd = sprite.EndTime;
         }
 
         [BackgroundDependencyLoader]

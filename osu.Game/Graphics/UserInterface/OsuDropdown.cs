@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System.Linq;
@@ -33,7 +33,6 @@ namespace osu.Game.Graphics.UserInterface
             if (accentColour == default(Color4))
                 accentColour = colours.PinkDarker;
             updateAccentColour();
-
         }
 
         private void updateAccentColour()
@@ -137,6 +136,8 @@ namespace osu.Game.Graphics.UserInterface
                     nonAccentHoverColour = colours.PinkDarker;
                     nonAccentSelectedColour = Color4.Black.Opacity(0.5f);
                     updateColours();
+
+                    AddInternal(new HoverClickSounds(HoverSampleSet.Soft));
                 }
 
                 protected override void UpdateForegroundColour()
@@ -183,7 +184,7 @@ namespace osu.Game.Graphics.UserInterface
                             {
                                 Origin = Anchor.CentreLeft,
                                 Anchor = Anchor.CentreLeft,
-                            }
+                            },
                         };
                     }
                 }
@@ -237,8 +238,10 @@ namespace osu.Game.Graphics.UserInterface
                         Origin = Anchor.CentreRight,
                         Margin = new MarginPadding { Right = 4 },
                         Size = new Vector2(20),
-                    }
+                    },
                 };
+
+                AddInternal(new HoverClickSounds());
             }
 
             [BackgroundDependencyLoader]

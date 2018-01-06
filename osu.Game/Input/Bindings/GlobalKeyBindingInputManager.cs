@@ -1,15 +1,16 @@
-// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using osu.Framework.Graphics;
+using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
 
 namespace osu.Game.Input.Bindings
 {
-    public class GlobalKeyBindingInputManager : DatabasedKeyBindingInputManager<GlobalAction>
+    public class GlobalKeyBindingInputManager : DatabasedKeyBindingInputManager<GlobalAction>, IHandleGlobalInput
     {
         private readonly Drawable handler;
 

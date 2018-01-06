@@ -1,15 +1,17 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System.Linq;
 using OpenTK.Input;
 using osu.Framework.Allocation;
+using osu.Framework.Audio;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Input;
 using osu.Framework.Screens;
 using osu.Game.Beatmaps;
 using osu.Game.Graphics;
+using osu.Game.Overlays;
 using osu.Game.Overlays.Mods;
 using osu.Game.Screens.Edit;
 using osu.Game.Screens.Play;
@@ -21,7 +23,7 @@ namespace osu.Game.Screens.Select
     {
         private OsuScreen player;
         private readonly ModSelectOverlay modSelect;
-        private readonly BeatmapDetailArea beatmapDetails;
+        protected readonly BeatmapDetailArea BeatmapDetails;
         private bool removeAutoModOnResume;
 
         public PlaySongSelect()
@@ -33,18 +35,22 @@ namespace osu.Game.Screens.Select
                 Anchor = Anchor.BottomCentre,
             });
 
-            LeftContent.Add(beatmapDetails = new BeatmapDetailArea
+            LeftContent.Add(BeatmapDetails = new BeatmapDetailArea
             {
                 RelativeSizeAxes = Axes.Both,
                 Padding = new MarginPadding { Top = 10, Right = 5 },
             });
 
-            beatmapDetails.Leaderboard.ScoreSelected += s => Push(new Results(s));
+            BeatmapDetails.Leaderboard.ScoreSelected += s => Push(new Results(s));
         }
 
-        [BackgroundDependencyLoader]
-        private void load(OsuColour colours)
+        private SampleChannel sampleConfirm;
+
+        [BackgroundDependencyLoader(true)]
+        private void load(OsuColour colours, AudioManager audio, BeatmapManager beatmaps, DialogOverlay dialogOverlay)
         {
+            sampleConfirm = audio.Sample.Get(@"SongSelect/confirm-selection");
+
             Footer.AddButton(@"mods", colours.Yellow, modSelect, Key.F1, float.MaxValue);
 
             BeatmapOptions.AddButton(@"Remove", @"from unplayed", FontAwesome.fa_times_circle_o, colours.Purple, null, Key.Number1);
@@ -54,6 +60,16 @@ namespace osu.Game.Screens.Select
                 ValidForResume = false;
                 Push(new Editor());
             }, Key.Number3);
+
+            if (dialogOverlay != null)
+            {
+                Schedule(() =>
+                {
+                    // if we have no beatmaps but osu-stable is found, let's prompt the user to import.
+                    if (!beatmaps.GetAllUsableBeatmapSets().Any() && beatmaps.StableInstallationAvailable)
+                        dialogOverlay.Push(new ImportFromStablePopup(() => beatmaps.ImportFromStable()));
+                });
+            }
         }
 
         protected override void UpdateBeatmap(WorkingBeatmap beatmap)
@@ -62,7 +78,7 @@ namespace osu.Game.Screens.Select
 
             beatmap.Mods.BindTo(modSelect.SelectedMods);
 
-            beatmapDetails.Beatmap = beatmap;
+            BeatmapDetails.Beatmap = beatmap;
 
             if (beatmap.Track != null)
                 beatmap.Track.Looping = true;
@@ -108,11 +124,12 @@ namespace osu.Game.Screens.Select
             return false;
         }
 
-        protected override void OnSelected(InputState state)
+        protected override bool OnSelectionFinalised()
         {
-            if (player != null) return;
+            if (player != null) return false;
 
-            if (state?.Keyboard.ControlPressed == true)
+            // Ctrl+Enter should start map with autoplay enabled.
+            if (GetContainingInputManager().CurrentState?.Keyboard.ControlPressed == true)
             {
                 var auto = Ruleset.Value.CreateInstance().GetAutoplayMod();
                 var autoType = auto.GetType();
@@ -128,7 +145,14 @@ namespace osu.Game.Screens.Select
             Beatmap.Value.Track.Looping = false;
             Beatmap.Disabled = true;
 
-            LoadComponentAsync(player = new PlayerLoader(new Player()), l => Push(player));
+            sampleConfirm?.Play();
+
+            LoadComponentAsync(player = new PlayerLoader(new Player()), l =>
+            {
+                if (IsCurrentScreen) Push(player);
+            });
+
+            return true;
         }
     }
 }

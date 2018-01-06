@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System;
@@ -174,7 +174,7 @@ namespace osu.Game.Screens.Menu
         [BackgroundDependencyLoader]
         private void load(AudioManager audio)
         {
-            sampleHover = audio.Sample.Get(@"Menu/hover");
+            sampleHover = audio.Sample.Get(@"Menu/button-hover");
             if (!string.IsNullOrEmpty(sampleName))
                 sampleClick = audio.Sample.Get($@"Menu/{sampleName}");
         }

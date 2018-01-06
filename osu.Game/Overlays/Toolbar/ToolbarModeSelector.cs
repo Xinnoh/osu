@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System.Linq;
@@ -14,7 +14,7 @@ using osu.Game.Rulesets;
 
 namespace osu.Game.Overlays.Toolbar
 {
-    internal class ToolbarModeSelector : Container
+    public class ToolbarModeSelector : Container
     {
         private const float padding = 10;
 
@@ -64,10 +64,10 @@ namespace osu.Game.Overlays.Toolbar
             };
         }
 
-        [BackgroundDependencyLoader]
+        [BackgroundDependencyLoader(true)]
         private void load(RulesetStore rulesets, OsuGame game)
         {
-            foreach (var r in rulesets.AllRulesets)
+            foreach (var r in rulesets.AvailableRulesets)
             {
                 modeButtons.Add(new ToolbarModeButton
                 {
@@ -81,7 +81,10 @@ namespace osu.Game.Overlays.Toolbar
 
             ruleset.ValueChanged += rulesetChanged;
             ruleset.DisabledChanged += disabledChanged;
-            ruleset.BindTo(game.Ruleset);
+            if (game != null)
+                ruleset.BindTo(game.Ruleset);
+            else
+                ruleset.Value = rulesets.AvailableRulesets.FirstOrDefault();
         }
 
         public override bool HandleInput => !ruleset.Disabled;

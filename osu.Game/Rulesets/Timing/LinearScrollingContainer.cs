@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using osu.Framework.Graphics;
@@ -8,7 +8,7 @@ namespace osu.Game.Rulesets.Timing
     /// <summary>
     /// A <see cref="ScrollingContainer"/> which scrolls linearly relative to the <see cref="MultiplierControlPoint"/> start time.
     /// </summary>
-    internal class LinearScrollingContainer : ScrollingContainer
+    public class LinearScrollingContainer : ScrollingContainer
     {
         private readonly MultiplierControlPoint controlPoint;
 

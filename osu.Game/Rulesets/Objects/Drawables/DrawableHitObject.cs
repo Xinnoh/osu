@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System;
@@ -13,6 +13,10 @@ using OpenTK.Graphics;
 using osu.Game.Audio;
 using System.Linq;
 using osu.Game.Graphics;
+using osu.Framework.Configuration;
+using OpenTK;
+using osu.Framework.Graphics.Primitives;
+using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Rulesets.Objects.Drawables
 {
@@ -25,16 +29,35 @@ namespace osu.Game.Rulesets.Objects.Drawables
         /// </summary>
         public virtual Color4 AccentColour { get; set; } = Color4.Gray;
 
+        /// <summary>
+        /// Whether a visible judgement should be displayed when this representation is hit.
+        /// </summary>
+        public virtual bool DisplayJudgement => true;
+
+        public override bool RemoveCompletedTransforms => false;
+        public override bool RemoveWhenNotAlive => false;
+
         protected DrawableHitObject(HitObject hitObject)
         {
             HitObject = hitObject;
         }
+
+        /// <summary>
+        /// The screen-space point that causes this <see cref="DrawableHitObject"/> to be selected in the Editor.
+        /// </summary>
+        public virtual Vector2 SelectionPoint => ScreenSpaceDrawQuad.Centre;
+
+        /// <summary>
+        /// The screen-space quad that outlines this <see cref="DrawableHitObject"/> for selections in the Editor.
+        /// </summary>
+        public virtual Quad SelectionQuad => ScreenSpaceDrawQuad;
     }
 
     public abstract class DrawableHitObject<TObject> : DrawableHitObject
         where TObject : HitObject
     {
         public event Action<DrawableHitObject, Judgement> OnJudgement;
+        public event Action<DrawableHitObject, Judgement> OnJudgementRemoved;
 
         public new readonly TObject HitObject;
 
@@ -50,6 +73,12 @@ namespace osu.Game.Rulesets.Objects.Drawables
         public IReadOnlyList<Judgement> Judgements => judgements;
 
         protected List<SampleChannel> Samples = new List<SampleChannel>();
+        protected virtual IEnumerable<SampleInfo> GetSamples() => HitObject.Samples;
+
+        // Todo: Rulesets should be overriding the resources instead, but we need to figure out where/when to apply overrides first
+        protected virtual string SampleNamespace => null;
+
+        public readonly Bindable<ArmedState> State = new Bindable<ArmedState>();
 
         protected DrawableHitObject(TObject hitObject)
             : base(hitObject)
@@ -57,25 +86,51 @@ namespace osu.Game.Rulesets.Objects.Drawables
             HitObject = hitObject;
         }
 
-        private ArmedState state;
-        public ArmedState State
+        [BackgroundDependencyLoader]
+        private void load(AudioManager audio)
         {
-            get { return state; }
-
-            set
+            var samples = GetSamples();
+            if (samples.Any())
             {
-                if (state == value)
-                    return;
-                state = value;
+                if (HitObject.SampleControlPoint == null)
+                    throw new ArgumentNullException(nameof(HitObject.SampleControlPoint), $"{nameof(HitObject)}s must always have an attached {nameof(HitObject.SampleControlPoint)}."
+                                                                                          + $" This is an indication that {nameof(HitObject.ApplyDefaults)} has not been invoked on {this}.");
 
-                if (!IsLoaded)
-                    return;
+                foreach (SampleInfo s in samples)
+                {
+                    SampleInfo localSampleInfo = new SampleInfo
+                    {
+                        Bank = s.Bank ?? HitObject.SampleControlPoint.SampleBank,
+                        Name = s.Name,
+                        Volume = s.Volume > 0 ? s.Volume : HitObject.SampleControlPoint.SampleVolume
+                    };
 
+                    SampleChannel channel = localSampleInfo.GetChannel(audio.Sample, SampleNamespace);
+
+                    if (channel == null)
+                        continue;
+
+                    Samples.Add(channel);
+                }
+            }
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+
+            State.ValueChanged += state =>
+            {
                 UpdateState(state);
+
+                // apply any custom state overrides
+                ApplyCustomUpdateState?.Invoke(this, state);
 
                 if (State == ArmedState.Hit)
                     PlaySamples();
-            }
+            };
+
+            State.TriggerChange();
         }
 
         protected void PlaySamples()
@@ -83,21 +138,13 @@ namespace osu.Game.Rulesets.Objects.Drawables
             Samples.ForEach(s => s?.Play());
         }
 
-        protected override void LoadComplete()
-        {
-            base.LoadComplete();
-
-            //force application of the state that was set before we loaded.
-            UpdateState(State);
-        }
-
-        private bool hasJudgementResult;
         private bool judgementOccurred;
+        private bool judgementFinalized => judgements.LastOrDefault()?.Final == true;
 
         /// <summary>
         /// Whether this <see cref="DrawableHitObject"/> and all of its nested <see cref="DrawableHitObject"/>s have been judged.
         /// </summary>
-        public virtual bool AllJudged => (!ProvidesJudgement || hasJudgementResult) && (NestedHitObjects?.All(h => h.AllJudged) ?? true);
+        public bool AllJudged => (!ProvidesJudgement || judgementFinalized) && (NestedHitObjects?.All(h => h.AllJudged) ?? true);
 
         /// <summary>
         /// Notifies that a new judgement has occurred for this <see cref="DrawableHitObject"/>.
@@ -105,7 +152,6 @@ namespace osu.Game.Rulesets.Objects.Drawables
         /// <param name="judgement">The <see cref="Judgement"/>.</param>
         protected void AddJudgement(Judgement judgement)
         {
-            hasJudgementResult = judgement.Result >= HitResult.Miss;
             judgementOccurred = true;
 
             // Ensure that the judgement is given a valid time offset, because this may not get set by the caller
@@ -119,10 +165,10 @@ namespace osu.Game.Rulesets.Objects.Drawables
                 case HitResult.None:
                     break;
                 case HitResult.Miss:
-                    State = ArmedState.Miss;
+                    State.Value = ArmedState.Miss;
                     break;
                 default:
-                    State = ArmedState.Hit;
+                    State.Value = ArmedState.Hit;
                     break;
             }
 
@@ -138,7 +184,7 @@ namespace osu.Game.Rulesets.Objects.Drawables
         {
             judgementOccurred = false;
 
-            if (AllJudged || State != ArmedState.Idle)
+            if (AllJudged)
                 return false;
 
             if (NestedHitObjects != null)
@@ -147,7 +193,7 @@ namespace osu.Game.Rulesets.Objects.Drawables
                     judgementOccurred |= d.UpdateJudgement(userTriggered);
             }
 
-            if (!ProvidesJudgement || hasJudgementResult || judgementOccurred)
+            if (!ProvidesJudgement || judgementFinalized || judgementOccurred)
                 return judgementOccurred;
 
             var endTime = (HitObject as IHasEndTime)?.EndTime ?? HitObject.StartTime;
@@ -165,26 +211,30 @@ namespace osu.Game.Rulesets.Objects.Drawables
         /// implies that this check occurred after the end time of <see cref="HitObject"/>. </param>
         protected virtual void CheckForJudgements(bool userTriggered, double timeOffset) { }
 
+        protected override void Update()
+        {
+            base.Update();
+
+            var endTime = (HitObject as IHasEndTime)?.EndTime ?? HitObject.StartTime;
+
+            while (judgements.Count > 0)
+            {
+                var lastJudgement = judgements[judgements.Count - 1];
+                if (lastJudgement.TimeOffset + endTime <= Time.Current)
+                    break;
+
+                judgements.RemoveAt(judgements.Count - 1);
+                State.Value = ArmedState.Idle;
+
+                OnJudgementRemoved?.Invoke(this, lastJudgement);
+            }
+        }
+
         protected override void UpdateAfterChildren()
         {
             base.UpdateAfterChildren();
 
             UpdateJudgement(false);
-        }
-
-        [BackgroundDependencyLoader]
-        private void load(AudioManager audio)
-        {
-            foreach (SampleInfo sample in HitObject.Samples)
-            {
-                SampleChannel channel = audio.Sample.Get($@"Gameplay/{sample.Bank}-{sample.Name}");
-
-                if (channel == null)
-                    continue;
-
-                channel.Volume.Value = sample.Volume;
-                Samples.Add(channel);
-            }
         }
 
         private List<DrawableHitObject<TObject>> nestedHitObjects;
@@ -196,8 +246,15 @@ namespace osu.Game.Rulesets.Objects.Drawables
                 nestedHitObjects = new List<DrawableHitObject<TObject>>();
 
             h.OnJudgement += (d, j) => OnJudgement?.Invoke(d, j);
+            h.OnJudgementRemoved += (d, j) => OnJudgementRemoved?.Invoke(d, j);
+            h.ApplyCustomUpdateState += (d, s) => ApplyCustomUpdateState?.Invoke(d, s);
             nestedHitObjects.Add(h);
         }
+
+        /// <summary>
+        /// Bind to apply a custom state which can override the default implementation.
+        /// </summary>
+        public event Action<DrawableHitObject, ArmedState> ApplyCustomUpdateState;
 
         protected abstract void UpdateState(ArmedState state);
     }

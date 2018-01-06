@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System.ComponentModel;
@@ -12,7 +12,13 @@ namespace osu.Game.Rulesets.Osu.Objects.Drawables
     {
         public const float TIME_PREEMPT = 600;
         public const float TIME_FADEIN = 400;
-        public const float TIME_FADEOUT = 500;
+
+        /// <summary>
+        /// The number of milliseconds used to fade in.
+        /// </summary>
+        public virtual double FadeInDuration { get; set; } = TIME_FADEIN;
+
+        public override bool IsPresent => base.IsPresent || State.Value == ArmedState.Idle && Time.Current >= HitObject.StartTime - TIME_PREEMPT;
 
         protected DrawableOsuHitObject(OsuHitObject hitObject)
             : base(hitObject)
@@ -23,12 +29,13 @@ namespace osu.Game.Rulesets.Osu.Objects.Drawables
 
         protected sealed override void UpdateState(ArmedState state)
         {
-            FinishTransforms();
+            double transformTime = HitObject.StartTime - TIME_PREEMPT;
 
-            using (BeginAbsoluteSequence(HitObject.StartTime - TIME_PREEMPT, true))
+            base.ApplyTransformsAt(transformTime, true);
+            base.ClearTransformsAfter(transformTime, true);
+
+            using (BeginAbsoluteSequence(transformTime, true))
             {
-                UpdateInitialState();
-
                 UpdatePreemptState();
 
                 using (BeginDelayedSequence(TIME_PREEMPT + (Judgements.FirstOrDefault()?.TimeOffset ?? 0), true))
@@ -36,19 +43,16 @@ namespace osu.Game.Rulesets.Osu.Objects.Drawables
             }
         }
 
-        protected virtual void UpdateInitialState()
-        {
-            Hide();
-        }
-
-        protected virtual void UpdatePreemptState()
-        {
-            this.FadeIn(TIME_FADEIN);
-        }
+        protected virtual void UpdatePreemptState() => this.FadeIn(FadeInDuration);
 
         protected virtual void UpdateCurrentState(ArmedState state)
         {
         }
+
+        // Todo: At some point we need to move these to DrawableHitObject after ensuring that all other Rulesets apply
+        // transforms in the same way and don't rely on them not being cleared
+        public override void ClearTransformsAfter(double time, bool propagateChildren = false, string targetMember = null) { }
+        public override void ApplyTransformsAt(double time, bool propagateChildren = false) { }
 
         private OsuInputManager osuActionInputManager;
         internal OsuInputManager OsuActionInputManager => osuActionInputManager ?? (osuActionInputManager = GetContainingInputManager() as OsuInputManager);

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using osu.Framework.Allocation;
@@ -32,9 +32,7 @@ namespace osu.Game.Screens.Backgrounds
 
                 Schedule(() =>
                 {
-                    var newBackground = new BeatmapBackground(beatmap);
-
-                    LoadComponentAsync(newBackground, delegate
+                    LoadComponentAsync(new BeatmapBackground(beatmap), b =>
                     {
                         float newDepth = 0;
                         if (background != null)
@@ -45,8 +43,8 @@ namespace osu.Game.Screens.Backgrounds
                             background.Expire();
                         }
 
-                        newBackground.Depth = newDepth;
-                        Add(background = newBackground);
+                        b.Depth = newDepth;
+                        Add(background = b);
                         background.BlurSigma = blurTarget;
                     });
                 });

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using OpenTK;
@@ -9,7 +9,7 @@ namespace osu.Game.Rulesets.Replays
     {
         public Vector2 Position => new Vector2(MouseX ?? 0, MouseY ?? 0);
 
-        public bool IsImportant => MouseX.HasValue && MouseY.HasValue && (MouseLeft || MouseRight);
+        public virtual bool IsImportant => MouseX.HasValue && MouseY.HasValue && (MouseLeft || MouseRight);
 
         public float? MouseX;
         public float? MouseY;

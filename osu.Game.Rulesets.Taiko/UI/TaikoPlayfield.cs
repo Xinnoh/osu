@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using osu.Framework.Allocation;
@@ -16,6 +16,7 @@ using osu.Framework.Extensions.Color4Extensions;
 using System.Linq;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Taiko.Objects.Drawables;
+using osu.Game.Beatmaps.ControlPoints;
 
 namespace osu.Game.Rulesets.Taiko.UI
 {
@@ -54,7 +55,7 @@ namespace osu.Game.Rulesets.Taiko.UI
         private readonly Box overlayBackground;
         private readonly Box background;
 
-        public TaikoPlayfield()
+        public TaikoPlayfield(ControlPointInfo controlPoints)
             : base(Axes.X)
         {
             AddRangeInternal(new Drawable[]
@@ -149,7 +150,7 @@ namespace osu.Game.Rulesets.Taiko.UI
                         {
                             RelativeSizeAxes = Axes.Both,
                         },
-                        new InputDrum
+                        new InputDrum(controlPoints)
                         {
                             Anchor = Anchor.CentreRight,
                             Origin = Anchor.CentreRight,
@@ -221,7 +222,7 @@ namespace osu.Game.Rulesets.Taiko.UI
 
         public override void OnJudgement(DrawableHitObject judgedObject, Judgement judgement)
         {
-            if (judgementContainer.FirstOrDefault(j => j.JudgedObject == judgedObject) == null)
+            if (judgedObject.DisplayJudgement && judgementContainer.FirstOrDefault(j => j.JudgedObject == judgedObject) == null)
             {
                 judgementContainer.Add(new DrawableTaikoJudgement(judgedObject, judgement)
                 {
@@ -244,7 +245,14 @@ namespace osu.Game.Rulesets.Taiko.UI
                 if (judgedObject.X >= -0.05f && judgedObject is DrawableHit)
                 {
                     // If we're far enough away from the left stage, we should bring outselves in front of it
-                    topLevelHitContainer.Add(judgedObject.CreateProxy());
+                    // Todo: The following try-catch is temporary for replay rewinding support
+                    try
+                    {
+                        topLevelHitContainer.Add(judgedObject.CreateProxy());
+                    }
+                    catch
+                    {
+                    }
                 }
 
                 hitExplosionContainer.Add(new HitExplosion(judgedObject, isRim));

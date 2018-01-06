@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using osu.Framework.Extensions.Color4Extensions;
@@ -13,6 +13,7 @@ using OpenTK;
 using OpenTK.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Graphics.Containers;
+using osu.Game.Graphics.UserInterface;
 
 namespace osu.Game.Overlays.Toolbar
 {
@@ -74,7 +75,7 @@ namespace osu.Game.Overlays.Toolbar
         private readonly SpriteText tooltip2;
         protected FillFlowContainer Flow;
 
-        public ToolbarButton()
+        public ToolbarButton() : base(HoverSampleSet.Loud)
         {
             Width = WIDTH;
             RelativeSizeAxes = Axes.Y;

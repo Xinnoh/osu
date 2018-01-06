@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using OpenTK;
@@ -69,8 +69,6 @@ namespace osu.Game.Overlays.Settings
                     Padding = new MarginPadding
                     {
                         Top = 20 + border_size,
-                        Left = SettingsOverlay.CONTENT_MARGINS,
-                        Right = SettingsOverlay.CONTENT_MARGINS,
                         Bottom = 10,
                     },
                     RelativeSizeAxes = Axes.X,
@@ -81,7 +79,8 @@ namespace osu.Game.Overlays.Settings
                         {
                             TextSize = header_size,
                             Text = Header,
-                            Colour = colours.Yellow
+                            Colour = colours.Yellow,
+                            Margin = new MarginPadding { Left = SettingsOverlay.CONTENT_MARGINS, Right = SettingsOverlay.CONTENT_MARGINS }
                         },
                         FlowContent
                     }

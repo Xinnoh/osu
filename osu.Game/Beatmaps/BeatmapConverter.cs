@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System;
@@ -39,12 +39,12 @@ namespace osu.Game.Beatmaps
         /// <returns>The converted Beatmap.</returns>
         protected virtual Beatmap<T> ConvertBeatmap(Beatmap original)
         {
-            return new Beatmap<T>
-            {
-                BeatmapInfo = original.BeatmapInfo,
-                ControlPointInfo = original.ControlPointInfo,
-                HitObjects = original.HitObjects.SelectMany(h => convert(h, original)).ToList()
-            };
+            var beatmap = CreateBeatmap();
+            beatmap.BeatmapInfo = original.BeatmapInfo;
+            beatmap.ControlPointInfo = original.ControlPointInfo;
+            beatmap.HitObjects = original.HitObjects.SelectMany(h => convert(h, original)).ToList();
+
+            return beatmap;
         }
 
         /// <summary>
@@ -79,7 +79,13 @@ namespace osu.Game.Beatmaps
         protected abstract IEnumerable<Type> ValidConversionTypes { get; }
 
         /// <summary>
+        /// Creates the <see cref="Beatmap{T}"/> that will be returned by this <see cref="BeatmapProcessor{T}"/>.
+        /// </summary>
+        protected virtual Beatmap<T> CreateBeatmap() => new Beatmap<T>();
+
+        /// <summary>
         /// Performs the conversion of a hit object.
+        /// This method is generally executed sequentially for all objects in a beatmap.
         /// </summary>
         /// <param name="original">The hit object to convert.</param>
         /// <param name="beatmap">The un-converted Beatmap.</param>

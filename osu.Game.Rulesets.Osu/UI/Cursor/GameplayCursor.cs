@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using osu.Framework.Allocation;
@@ -125,7 +125,7 @@ namespace osu.Game.Rulesets.Osu.UI.Cursor
                 if (autoCursorScale && beatmap.Value != null)
                 {
                     // if we have a beatmap available, let's get its circle size to figure out an automatic cursor scale modifier.
-                    scale *= (float)(1 - 0.7 * (1 + beatmap.Value.BeatmapInfo.Difficulty.CircleSize - BeatmapDifficulty.DEFAULT_DIFFICULTY) / BeatmapDifficulty.DEFAULT_DIFFICULTY);
+                    scale *= (float)(1 - 0.7 * (1 + beatmap.Value.BeatmapInfo.BaseDifficulty.CircleSize - BeatmapDifficulty.DEFAULT_DIFFICULTY) / BeatmapDifficulty.DEFAULT_DIFFICULTY);
                 }
 
                 cursorContainer.Scale = new Vector2(scale);

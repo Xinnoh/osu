@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using osu.Framework.Allocation;
@@ -24,12 +24,14 @@ namespace osu.Game.Overlays.Settings.Sections
                 new SettingsSlider<double, SizeSlider>
                 {
                     LabelText = "Menu cursor size",
-                    Bindable = config.GetBindable<double>(OsuSetting.MenuCursorSize)
+                    Bindable = config.GetBindable<double>(OsuSetting.MenuCursorSize),
+                    KeyboardStep = 0.1f
                 },
                 new SettingsSlider<double, SizeSlider>
                 {
                     LabelText = "Gameplay cursor size",
-                    Bindable = config.GetBindable<double>(OsuSetting.GameplayCursorSize)
+                    Bindable = config.GetBindable<double>(OsuSetting.GameplayCursorSize),
+                    KeyboardStep = 0.1f
                 },
                 new SettingsCheckbox
                 {

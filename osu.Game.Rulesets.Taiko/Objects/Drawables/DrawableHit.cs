@@ -1,10 +1,11 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System;
 using System.Linq;
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Taiko.Judgements;
 using osu.Game.Rulesets.Taiko.Objects.Drawables.Pieces;
 
@@ -16,6 +17,11 @@ namespace osu.Game.Rulesets.Taiko.Objects.Drawables
         /// A list of keys which can result in hits for this HitObject.
         /// </summary>
         protected abstract TaikoAction[] HitActions { get; }
+
+        /// <summary>
+        /// Whether a second hit is allowed to be processed. This occurs once this hit object has been hit successfully.
+        /// </summary>
+        protected bool SecondHitAllowed { get; private set; }
 
         /// <summary>
         /// Whether the last key pressed is a valid hit key.
@@ -45,7 +51,15 @@ namespace osu.Game.Rulesets.Taiko.Objects.Drawables
             if (!validKeyPressed)
                 AddJudgement(new TaikoJudgement { Result = HitResult.Miss });
             else if (hitOffset < HitObject.HitWindowGood)
-                AddJudgement(new TaikoJudgement { Result = hitOffset < HitObject.HitWindowGreat ? HitResult.Great : HitResult.Good });
+            {
+                AddJudgement(new TaikoJudgement
+                {
+                    Result = hitOffset < HitObject.HitWindowGreat ? HitResult.Great : HitResult.Good,
+                    Final = !HitObject.IsStrong
+                });
+
+                SecondHitAllowed = true;
+            }
             else
                 AddJudgement(new TaikoJudgement { Result = HitResult.Miss });
         }
@@ -54,6 +68,7 @@ namespace osu.Game.Rulesets.Taiko.Objects.Drawables
         {
             validKeyPressed = HitActions.Contains(action);
 
+            // Only count this as handled if the new judgement is a hit
             return UpdateJudgement(true);
         }
 
@@ -72,7 +87,7 @@ namespace osu.Game.Rulesets.Taiko.Objects.Drawables
             var offset = !AllJudged ? 0 : Time.Current - HitObject.StartTime;
             using (BeginDelayedSequence(HitObject.StartTime - Time.Current + offset, true))
             {
-                switch (State)
+                switch (State.Value)
                 {
                     case ArmedState.Idle:
                         this.Delay(HitObject.HitWindowMiss).Expire();

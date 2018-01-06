@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System.Collections.Generic;
@@ -28,6 +28,7 @@ namespace osu.Game.Overlays.KeyBinding
             this.variant = variant;
 
             FlowContent.Spacing = new Vector2(0, 1);
+            FlowContent.Padding = new MarginPadding { Left = SettingsOverlay.CONTENT_MARGINS, Right = SettingsOverlay.CONTENT_MARGINS };
         }
 
         [BackgroundDependencyLoader]
@@ -37,8 +38,10 @@ namespace osu.Game.Overlays.KeyBinding
 
             foreach (var defaultGroup in Defaults.GroupBy(d => d.Action))
             {
+                int intKey = (int)defaultGroup.Key;
+
                 // one row per valid action.
-                Add(new KeyBindingRow(defaultGroup.Key, bindings.Where(b => b.Action.Equals((int)defaultGroup.Key)))
+                Add(new KeyBindingRow(defaultGroup.Key, bindings.Where(b => ((int)b.Action).Equals(intKey)))
                 {
                     AllowMainMouseButtons = Ruleset != null,
                     Defaults = defaultGroup.Select(d => d.KeyCombination)
@@ -52,7 +55,7 @@ namespace osu.Game.Overlays.KeyBinding
         }
     }
 
-    internal class ResetButton : OsuButton
+    public class ResetButton : TriangleButton
     {
         [BackgroundDependencyLoader]
         private void load(OsuColour colours)

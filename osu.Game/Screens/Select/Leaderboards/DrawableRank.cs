@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using osu.Framework.Allocation;
@@ -14,14 +14,9 @@ namespace osu.Game.Screens.Select.Leaderboards
     public class DrawableRank : Container
     {
         private readonly Sprite rankSprite;
+        private TextureStore textures;
 
         public ScoreRank Rank { get; private set; }
-
-        [BackgroundDependencyLoader]
-        private void load(TextureStore textures)
-        {
-            rankSprite.Texture = textures.Get($@"Grades/{Rank.GetDescription()}");
-        }
 
         public DrawableRank(ScoreRank rank)
         {
@@ -37,6 +32,21 @@ namespace osu.Game.Screens.Select.Leaderboards
                     FillMode = FillMode.Fit
                 },
             };
+        }
+
+        [BackgroundDependencyLoader]
+        private void load(TextureStore textures)
+        {
+            this.textures = textures;
+            updateTexture();
+        }
+
+        private void updateTexture() => rankSprite.Texture = textures.Get($@"Grades/{Rank.GetDescription()}");
+
+        public void UpdateRank(ScoreRank newRank)
+        {
+            Rank = newRank;
+            updateTexture();
         }
     }
 }

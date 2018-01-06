@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System.Linq;
@@ -10,7 +10,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
-using osu.Framework.Input;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.UserInterface;
@@ -28,19 +27,11 @@ namespace osu.Game.Overlays
         private ProfileSection[] sections;
         private GetUserRequest userReq;
         private APIAccess api;
-        private ProfileHeader header;
+        protected ProfileHeader Header;
         private SectionsContainer<ProfileSection> sectionsContainer;
         private ProfileTabControl tabs;
 
         public const float CONTENT_X_MARGIN = 50;
-
-        public override bool ReceiveMouseInputAt(Vector2 screenSpacePos) => true;
-
-        protected override bool OnClick(InputState state)
-        {
-            State = Visibility.Hidden;
-            return true;
-        }
 
         public UserProfileOverlay()
         {
@@ -90,10 +81,10 @@ namespace osu.Game.Overlays
 
             sections = new ProfileSection[]
             {
-                new AboutSection(),
-                new RecentSection(),
+                //new AboutSection(),
+                //new RecentSection(),
                 new RanksSection(),
-                new MedalsSection(),
+                //new MedalsSection(),
                 new HistoricalSection(),
                 new BeatmapsSection(),
                 new KudosuSection()
@@ -112,12 +103,12 @@ namespace osu.Game.Overlays
                 Colour = OsuColour.Gray(0.2f)
             });
 
-            header = new ProfileHeader(user);
+            Header = new ProfileHeader(user);
 
             Add(sectionsContainer = new SectionsContainer<ProfileSection>
             {
                 RelativeSizeAxes = Axes.Both,
-                ExpandableHeader = header,
+                ExpandableHeader = Header,
                 FixedHeader = tabs,
                 HeaderBackground = new Box
                 {
@@ -163,17 +154,20 @@ namespace osu.Game.Overlays
             }
 
             Show();
+            sectionsContainer.ScrollToTop();
         }
 
         private void userLoadComplete(User user)
         {
-            header.User = user;
+            Header.User = user;
 
             foreach (string id in user.ProfileOrder)
             {
                 var sec = sections.FirstOrDefault(s => s.Identifier == id);
                 if (sec != null)
                 {
+                    sec.User.Value = user;
+
                     sectionsContainer.Add(sec);
                     tabs.AddItem(sec);
                 }

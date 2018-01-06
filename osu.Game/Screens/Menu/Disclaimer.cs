@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using osu.Framework.Allocation;
@@ -12,15 +12,15 @@ using OpenTK.Graphics;
 
 namespace osu.Game.Screens.Menu
 {
-    internal class Disclaimer : OsuScreen
+    public class Disclaimer : OsuScreen
     {
         private Intro intro;
         private readonly SpriteIcon icon;
         private Color4 iconColour;
 
-        internal override bool ShowOverlays => false;
+        public override bool ShowOverlaysOnEnter => false;
 
-        internal override bool HasLocalCursorDisplayed => true;
+        public override bool HasLocalCursorDisplayed => true;
 
         public Disclaimer()
         {

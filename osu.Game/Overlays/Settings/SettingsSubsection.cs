@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using OpenTK;
@@ -52,7 +52,7 @@ namespace osu.Game.Overlays.Settings
                 new OsuSpriteText
                 {
                     Text = Header.ToUpper(),
-                    Margin = new MarginPadding { Bottom = 10 },
+                    Margin = new MarginPadding { Bottom = 10, Left = SettingsOverlay.CONTENT_MARGINS, Right = SettingsOverlay.CONTENT_MARGINS },
                     Font = @"Exo2.0-Black",
                 },
                 FlowContent

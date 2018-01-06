@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System;
@@ -15,6 +15,7 @@ using osu.Game.Screens.Select.Filter;
 using Container = osu.Framework.Graphics.Containers.Container;
 using osu.Framework.Input;
 using osu.Framework.Graphics.Shapes;
+using osu.Game.Configuration;
 using osu.Game.Rulesets;
 
 namespace osu.Game.Screens.Select
@@ -60,6 +61,7 @@ namespace osu.Game.Screens.Select
             Group = group,
             Sort = sort,
             SearchText = searchTextBox.Text,
+            AllowConvertedBeatmaps = showConverted,
             Ruleset = ruleset
         };
 
@@ -73,7 +75,7 @@ namespace osu.Game.Screens.Select
         {
             Children = new Drawable[]
             {
-                new Box
+                Background = new Box
                 {
                     Colour = Color4.Black,
                     Alpha = 0.8f,
@@ -163,16 +165,25 @@ namespace osu.Game.Screens.Select
 
         private readonly Bindable<RulesetInfo> ruleset = new Bindable<RulesetInfo>();
 
+        private Bindable<bool> showConverted;
+
+        public readonly Box Background;
+
         [BackgroundDependencyLoader(permitNulls: true)]
-        private void load(OsuColour colours, OsuGame osu)
+        private void load(OsuColour colours, OsuGame osu, OsuConfigManager config)
         {
             sortTabs.AccentColour = colours.GreenLight;
 
+            showConverted = config.GetBindable<bool>(OsuSetting.ShowConvertedBeatmaps);
+            showConverted.ValueChanged += val => updateCriteria();
+
             if (osu != null)
                 ruleset.BindTo(osu.Ruleset);
-            ruleset.ValueChanged += val => FilterChanged?.Invoke(CreateCriteria());
+            ruleset.ValueChanged += val => updateCriteria();
             ruleset.TriggerChange();
         }
+
+        private void updateCriteria() => FilterChanged?.Invoke(CreateCriteria());
 
         protected override bool OnMouseDown(InputState state, MouseDownEventArgs args) => true;
 

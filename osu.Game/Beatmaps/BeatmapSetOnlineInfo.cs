@@ -1,9 +1,8 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System;
 using Newtonsoft.Json;
-using osu.Game.Users;
 
 namespace osu.Game.Beatmaps
 {
@@ -12,11 +11,6 @@ namespace osu.Game.Beatmaps
     /// </summary>
     public class BeatmapSetOnlineInfo
     {
-        /// <summary>
-        /// The author of the beatmaps in this set.
-        /// </summary>
-        public User Author;
-
         /// <summary>
         /// The date this beatmap set was submitted to the online listing.
         /// </summary>
@@ -33,15 +27,18 @@ namespace osu.Game.Beatmaps
         public DateTimeOffset? LastUpdated { get; set; }
 
         /// <summary>
+        /// Whether or not this beatmap set has a background video.
+        /// </summary>
+        public bool HasVideo { get; set; }
+
+        /// <summary>
         /// The different sizes of cover art for this beatmap set.
         /// </summary>
-        [JsonProperty(@"covers")]
         public BeatmapSetOnlineCovers Covers { get; set; }
 
         /// <summary>
         /// A small sample clip of this beatmap set's song.
         /// </summary>
-        [JsonProperty(@"previewUrl")]
         public string Preview { get; set; }
 
         /// <summary>
@@ -52,13 +49,11 @@ namespace osu.Game.Beatmaps
         /// <summary>
         /// The amount of plays this beatmap set has.
         /// </summary>
-        [JsonProperty(@"play_count")]
         public int PlayCount { get; set; }
 
         /// <summary>
         /// The amount of people who have favourited this beatmap set.
         /// </summary>
-        [JsonProperty(@"favourite_count")]
         public int FavouriteCount { get; set; }
     }
 

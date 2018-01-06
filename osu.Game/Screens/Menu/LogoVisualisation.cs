@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using OpenTK;
@@ -19,7 +19,7 @@ using osu.Framework.Allocation;
 
 namespace osu.Game.Screens.Menu
 {
-    internal class LogoVisualisation : Drawable, IHasAccentColour
+    public class LogoVisualisation : Drawable, IHasAccentColour
     {
         private readonly Bindable<WorkingBeatmap> beatmap = new Bindable<WorkingBeatmap>();
 
@@ -85,11 +85,10 @@ namespace osu.Game.Screens.Menu
 
         private void updateAmplitudes()
         {
-            var track = beatmap.Value.Track;
+            var track = beatmap.Value.TrackLoaded ? beatmap.Value.Track : null;
+            var effect = beatmap.Value.BeatmapLoaded ? beatmap.Value.Beatmap.ControlPointInfo.EffectPointAt(track?.CurrentTime ?? Time.Current) : null;
 
             float[] temporalAmplitudes = track?.CurrentAmplitudes.FrequencyAmplitudes ?? new float[256];
-
-            var effect = beatmap.Value.Beatmap.ControlPointInfo.EffectPointAt(track?.CurrentTime ?? Time.Current);
 
             for (int i = 0; i < bars_per_visualiser; i++)
             {

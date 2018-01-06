@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System;
@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 namespace osu.Game.Online.API
 {
     [Serializable]
-    internal class OAuthToken
+    public class OAuthToken
     {
         /// <summary>
         /// OAuth 2.0 access token.

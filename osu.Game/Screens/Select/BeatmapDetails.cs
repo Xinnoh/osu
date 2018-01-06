@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using OpenTK;
@@ -17,6 +17,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Game.Screens.Select.Details;
 using osu.Game.Beatmaps;
+using osu.Game.Graphics.Containers;
 
 namespace osu.Game.Screens.Select
 {
@@ -261,10 +262,11 @@ namespace osu.Game.Screens.Select
             description.Text = null;
             source.Text = null;
             tags.Text = null;
+
             advanced.Beatmap = new BeatmapInfo
             {
                 StarDifficulty = 0,
-                Difficulty = new BeatmapDifficulty
+                BaseDifficulty = new BeatmapDifficulty
                 {
                     CircleSize = 0,
                     DrainRate = 0,
@@ -306,36 +308,16 @@ namespace osu.Game.Screens.Select
 
         private class MetadataSection : Container
         {
-            private readonly TextFlowContainer textFlow;
-
-            public string Text
-            {
-                set
-                {
-                    if (string.IsNullOrEmpty(value))
-                    {
-                        this.FadeOut(transition_duration);
-                        return;
-                    }
-
-                    this.FadeIn(transition_duration);
-                    textFlow.Clear();
-                    textFlow.AddText(value, s => s.TextSize = 14);
-                }
-            }
-
-            public Color4 TextColour
-            {
-                get { return textFlow.Colour; }
-                set { textFlow.Colour = value; }
-            }
+            private readonly FillFlowContainer textContainer;
+            private TextFlowContainer textFlow;
 
             public MetadataSection(string title)
             {
                 RelativeSizeAxes = Axes.X;
                 AutoSizeAxes = Axes.Y;
+                Alpha = 0;
 
-                InternalChild = new FillFlowContainer
+                InternalChild = textContainer = new FillFlowContainer
                 {
                     RelativeSizeAxes = Axes.X,
                     AutoSizeAxes = Axes.Y,
@@ -353,13 +335,51 @@ namespace osu.Game.Screens.Select
                                 TextSize = 14,
                             },
                         },
-                        textFlow = new TextFlowContainer
+                        textFlow = new OsuTextFlowContainer
                         {
                             RelativeSizeAxes = Axes.X,
                             AutoSizeAxes = Axes.Y,
                         },
                     },
                 };
+            }
+
+            public string Text
+            {
+                set
+                {
+                    if (string.IsNullOrEmpty(value))
+                    {
+                        this.FadeOut(transition_duration);
+                        return;
+                    }
+
+                    setTextAsync(value);
+                }
+            }
+
+            private void setTextAsync(string text)
+            {
+                LoadComponentAsync(new OsuTextFlowContainer(s => s.TextSize = 14)
+                {
+                    RelativeSizeAxes = Axes.X,
+                    AutoSizeAxes = Axes.Y,
+                    Colour = textFlow.Colour,
+                    Text = text
+                }, loaded =>
+                {
+                    textFlow?.Expire();
+                    textContainer.Add(textFlow = loaded);
+
+                    // fade in if we haven't yet.
+                    this.FadeIn(transition_duration);
+                });
+            }
+
+            public Color4 TextColour
+            {
+                get { return textFlow.Colour; }
+                set { textFlow.Colour = value; }
             }
         }
 

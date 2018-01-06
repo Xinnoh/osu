@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2007-2017 ppy Pty Ltd <contact@ppy.sh>.
+﻿// Copyright (c) 2007-2018 ppy Pty Ltd <contact@ppy.sh>.
 // Licensed under the MIT Licence - https://raw.githubusercontent.com/ppy/osu/master/LICENCE
 
 using System.Collections.Generic;
@@ -55,11 +55,7 @@ namespace osu.Game.Screens.Play.HUD
                 iconsContainer.Clear();
                 foreach (Mod mod in mods)
                 {
-                    iconsContainer.Add(new ModIcon(mod)
-                    {
-                        AutoSizeAxes = Axes.Both,
-                        Scale = new Vector2(0.6f),
-                    });
+                    iconsContainer.Add(new ModIcon(mod) { Scale = new Vector2(0.6f) });
                 }
 
                 if (IsLoaded)
